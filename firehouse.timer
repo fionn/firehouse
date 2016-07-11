@@ -1,0 +1,11 @@
+# /etc/systemd/system/firehouse.timer
+
+[Unit]
+Description=Firehouse Film Contest bot timer
+
+[Timer]
+OnCalendar=*-*-* 13:00:00
+
+[Install]
+WantedBy=timers.target
+
