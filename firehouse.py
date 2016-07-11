@@ -8,7 +8,7 @@ from time import sleep
 
 def tweet():
     status = composetweet(tweet_this())
-    #api.update_status(status)
+    api.update_status(status)
     print(status)
 
 if __name__ == "__main__":
