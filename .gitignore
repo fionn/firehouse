@@ -1,0 +1,6 @@
+*.swp
+*.json
+*.sh
+creds.py
+handles.py
+__pycache__/

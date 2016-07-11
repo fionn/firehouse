@@ -1,0 +1,11 @@
+# /etc/systemd/system/firehouse.service
+[Unit]
+Description=Firehouse Film Contest bot
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env python3 -u /home/path/to/firehouse/firehouse.py
+StandardOutput=syslog
+StandardError=syslog
+
