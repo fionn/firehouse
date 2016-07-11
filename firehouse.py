@@ -16,14 +16,12 @@ if __name__ == "__main__":
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-    while True:
-        try:
-            tweet()
-            sleep(24 * 60 * 60)
-        except tweepy.error.TweepError as e:
-            print(e)
-            sleep(15 * 60)
-        except Exception as e:
-            print(e)
-            raise
+    try:
+        tweet()
+    except tweepy.error.TweepError as e:
+        print(e)
+        sleep(15 * 60)
+    except Exception as e:
+        print(e)
+        raise
 
