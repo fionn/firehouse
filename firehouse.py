@@ -7,9 +7,9 @@ from creds import consumer_key, consumer_secret, access_token, access_token_secr
 from time import sleep
 
 def tweet():
-    status = composetweet(tweet_this())
-    api.update_status(status)
-    print(status)
+    text = composetweet(tweet_this())
+    api.update_status(status = text)
+    print(text)
 
 if __name__ == "__main__":
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -21,6 +21,7 @@ if __name__ == "__main__":
     except tweepy.error.TweepError as e:
         print(e)
         sleep(15 * 60)
+        tweet()
     except Exception as e:
         print(e)
         raise
