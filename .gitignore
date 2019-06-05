@@ -1,6 +1,6 @@
 *.swp
 *.json
-*.sh
-creds.py
+venv/
+.env
 handles.py
 __pycache__/
