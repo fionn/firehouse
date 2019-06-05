@@ -5,6 +5,7 @@ import re
 import json
 import html
 import random
+from pathlib import Path
 from typing import List
 
 from bs4 import BeautifulSoup
@@ -94,7 +95,7 @@ class Films:
     def _film_list() -> list:
         """Data from http://firehousefilmcontest.com/?json=1. Don't pull
             as quality is often bad"""
-        with open("../data/ffc.json", "r") as film_io:
+        with (Path(__file__).parent.parent / "data/ffc.json").open("r") as film_io:
             film_dict = json.loads(film_io.read())
             return [film for film in film_dict["posts"]]
 
