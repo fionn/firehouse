@@ -5,8 +5,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/path/to/firehouse/
-ExecStart=/usr/bin/env python3 -u /home/path/to/firehouse/firehouse.py
+WorkingDirectory=/home/fionn/bots/firehouse/
+EnvironmentFile=/home/fionn/bots/firehouse/.env
+ExecStart=/home/fionn/bots/firehouse/venv/bin/python -u src/firehouse.py
 StandardOutput=syslog
 StandardError=syslog
-
