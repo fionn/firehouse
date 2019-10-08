@@ -11,7 +11,7 @@ tags: $(SRC)
 
 .PHONY: outdated
 outdated:
-	@(source $(VENV)/bin/activate && pip list --outdated)
+	@source $(VENV)/bin/activate && pip list --outdated
 
 .PHONY: lint
 lint:
