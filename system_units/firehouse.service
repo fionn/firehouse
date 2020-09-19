@@ -8,8 +8,6 @@ Type=oneshot
 WorkingDirectory=/home/fionn/bots/firehouse/
 EnvironmentFile=/home/fionn/bots/firehouse/.env
 ExecStart=/home/fionn/bots/firehouse/venv/bin/python -u src/firehouse.py
-StandardOutput=syslog
-StandardError=syslog
 
 DynamicUser=true
 PrivateDevices=true
