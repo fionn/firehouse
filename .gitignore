@@ -1,6 +1,5 @@
 *.swp
-*.json
+films.json
 venv/
 .env
-handles.py
 __pycache__/

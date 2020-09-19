@@ -10,8 +10,6 @@ from typing import List
 
 from bs4 import BeautifulSoup
 
-from handles import HANDLE_MAP
-
 # pylint: disable=too-few-public-methods
 class FilmTweet:
     """Just the text, pretty much"""
@@ -80,7 +78,9 @@ class Film:
     def humans(self) -> List[str]:
         """Twitter handles of filmmakers"""
         handles = []
-        for name, handle in HANDLE_MAP.items():
+        with (Path(__file__).parent.parent / "data/handles.json").open("r") as handles_fd:
+            handle_map = json.load(handles_fd)
+        for name, handle in handle_map.items():
             if name.lower() in self.excerpt.lower():
                 handles.append(handle)
         return handles
@@ -95,9 +95,8 @@ class Films:
     def _film_list() -> list:
         """Data from http://firehousefilmcontest.com/?json=1. Don't pull
             as quality is often bad"""
-        with (Path(__file__).parent.parent / "data/ffc.json").open("r") as film_io:
-            film_dict = json.loads(film_io.read())
-            return [film for film in film_dict["posts"]]
+        with (Path(__file__).parent.parent / "data/films.json").open("r") as film_fd:
+            return json.load(film_fd)["posts"]
 
     def get_film(self, max_length: int = 200) -> Film:
         """Get a random film subject to constraint"""
