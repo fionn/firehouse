@@ -6,53 +6,25 @@ import json
 import html
 import random
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Any
 
 from bs4 import BeautifulSoup
-
-# pylint: disable=too-few-public-methods
-class FilmTweet:
-    """Just the text, pretty much"""
-
-    def __init__(self, film: "Film") -> None:
-        self.film = film
-        self.text = self._compose_tweet()
-
-    def _compose_tweet(self) -> str:
-        """Compose a tweet about a film"""
-        tweet = ""
-        if self.film.awards:
-            tweet = "Winner of " + ", ".join(self.film.awards) + " in "
-        else:
-            tweet = "From "
-        tweet += f"Firehouse {self.film.firehouse_no}, “{self.film.title}”"
-        if self.film.humans:
-            tweet += " by " + ", ".join(["@" + human for human in self.film.humans])
-        tweet += f": {self.film.url}. {self.film.video_url}"
-        return tweet
-
-    def __len__(self) -> int:
-        return len(self.text) - len(self.film.url) - len(self.film.video_url) + 2 * 23
-
-    def __repr__(self) -> str:
-        return self.text
-
-    def __str__(self) -> str:
-        return self.__repr__()
 
 class Film:
     """Film metadata"""
 
-    def __init__(self, data: dict) -> None:
+    def __init__(self, data: Dict[str, Any]) -> None:
         self.title = html.unescape(data["title"])
         self.categories = data["categories"]
         self.firehouse_no = self.categories[0]["title"].split()[0][1:]
         self.url = data["url"].split("http://", maxsplit=1)[1]
         self.excerpt = html.unescape(no_html(data["excerpt"])).strip()
         self.content = data["content"]
-        self.tweet = FilmTweet(self)
         #self.firehouse_name = unescape(" ".join(data["categories"][0]["title"].split()[1:]))
         #self.img_url = data["thumbnail_images"]["large"]["url"]
+
+    def __len__(self) -> int:
+        return len(self.text()) - len(self.url) - len(self.video_url) + 2 * 23
 
     @property
     def awards(self) -> List[str]:
@@ -85,26 +57,58 @@ class Film:
                 handles.append(handle)
         return handles
 
+    def text(self) -> str:
+        """Compose a tweet about a film"""
+        tweet = ""
+        if self.awards:
+            tweet = "Winner of " + ", ".join(self.awards) + " in "
+        else:
+            tweet = "From "
+        tweet += f"Firehouse {self.firehouse_no}, “{self.title}”"
+        if self.humans:
+            tweet += " by " + ", ".join(["@" + human for human in self.humans])
+        tweet += f": {self.url}. {self.video_url}"
+        return tweet
+
 class Films:
     """Factory to create films more efficiently"""
 
     def __init__(self) -> None:
         self._raw_films = self._film_list()
+        self._position = 0
+        self._end = len(self._raw_films) - 1
+
+    def __iter__(self) -> "Films":
+        return self
+
+    def __next__(self) -> Film:
+        if self._position >= self._end:
+            raise StopIteration
+        self._position += 1
+        return Film(self._raw_films[self._position])
 
     @staticmethod
     def _film_list() -> list:
-        """Data from http://firehousefilmcontest.com/?json=1. Don't pull
-            as quality is often bad"""
+        """Data from http://firehousefilmcontest.com/?json=1"""
         with (Path(__file__).parent.parent / "data/films.json").open("r") as film_fd:
             return json.load(film_fd)["posts"]
 
-    def get_film(self, max_length: int = 200) -> Film:
-        """Get a random film subject to constraint"""
+    def choice(self, max_length: int = 200) -> Film:
+        """Get a random film subject to length constraint"""
         film = Film(random.choice(self._raw_films))
-        if len(film.tweet) <= max_length:
+        if len(film.text()) <= max_length:
             return film
-        return self.get_film()
+        return self.choice()
 
 def no_html(text: str) -> str:
     """Helper to strip HTML from strings"""
     return re.sub("<[^<]+?>", "", text)
+
+def main() -> None:
+    """Entry point"""
+    films = Films()
+    for film in films:
+        print(film.text(), end="\n\n")
+
+if __name__ == "__main__":
+    main()
